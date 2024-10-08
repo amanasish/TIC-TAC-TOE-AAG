@@ -1,16 +1,17 @@
+// Constants
 const N_SIZE = 3;
-const EMPTY = '&nbsp;';
+const EMPTY = '';  // Changed from '&nbsp;' to empty string
+
+// Game state variables
 let boxes = [];
 let turn = 'X';
-let score;
 let moves;
 
 function init() {
     const board = document.createElement('table');
     board.setAttribute('border', 1);
     board.setAttribute('cellspacing', 0);
-
-    let identifier = 1;
+    
     for (let i = 0; i < N_SIZE; i++) {
         const row = document.createElement('tr');
         board.appendChild(row);
@@ -27,69 +28,91 @@ function init() {
             if (j === N_SIZE - i - 1) {
                 cell.classList.add('diagonal1');
             }
-            cell.identifier = identifier;
             cell.addEventListener('click', set);
             row.appendChild(cell);
             boxes.push(cell);
-            identifier += identifier;
         }
     }
-
     document.getElementById('tictactoe').appendChild(board);
     startNewGame();
 }
 
 function startNewGame() {
-    score = { 'X': 0, 'O': 0 };
     moves = 0;
     turn = 'X';
     boxes.forEach(square => {
         square.innerHTML = EMPTY;
-        square.classList.remove('x', 'o');
+        square.classList.remove('x', 'o', 'win');
     });
+    updateTurnDisplay();
+}
+
+function updateTurnDisplay() {
     document.getElementById('turn').textContent = 'Player ' + turn;
 }
 
-function win(clicked) {
-    const memberOf = clicked.className.split(/\s+/);
-    for (const className of memberOf) {
-        const testClass = '.' + className;
-        const items = contains('#tictactoe ' + testClass, turn);
-        if (items.length === N_SIZE) {
-            items.forEach(item => item.classList.add('win'));
-            return true;
-        }
+function checkWin() {
+    // Check rows
+    for (let i = 0; i < N_SIZE; i++) {
+        if (checkLine(boxes.slice(i * N_SIZE, (i + 1) * N_SIZE))) return true;
     }
-    return false;
+    
+    // Check columns
+    for (let i = 0; i < N_SIZE; i++) {
+        const column = [boxes[i], boxes[i + N_SIZE], boxes[i + (2 * N_SIZE)]];
+        if (checkLine(column)) return true;
+    }
+    
+    // Check diagonals
+    const diagonal1 = [boxes[0], boxes[4], boxes[8]];
+    const diagonal2 = [boxes[2], boxes[4], boxes[6]];
+    return checkLine(diagonal1) || checkLine(diagonal2);
 }
 
-function contains(selector, text) {
-    const elements = document.querySelectorAll(selector);
-    return Array.from(elements).filter(element => RegExp(text).test(element.textContent));
+function checkLine(cells) {
+    const firstClass = cells[0].classList.contains('x') ? 'x' : 
+                       cells[0].classList.contains('o') ? 'o' : null;
+    
+    if (!firstClass) return false;
+    
+    const win = cells.every(cell => cell.classList.contains(firstClass));
+    
+    if (win) {
+        cells.forEach(cell => cell.classList.add('win'));
+    }
+    
+    return win;
 }
 
 function set() {
-    if (this.innerHTML !== EMPTY) {
+    if (this.classList.contains('x') || this.classList.contains('o')) {
         return;
     }
-    this.innerHTML = turn;
+    
+    this.innerHTML = EMPTY;  // Keep the cell text empty
     this.classList.add(turn.toLowerCase());
-    moves += 1;
-    score[turn] += this.identifier;
-    if (win(this)) {
-        alert('Winner: Player ' + turn);
-        startNewGame();
+    moves++;
+    
+    if (checkWin()) {
+        setTimeout(() => {
+            alert('Winner: Player ' + turn);
+            startNewGame();
+        }, 100);
     } else if (moves === N_SIZE * N_SIZE) {
-        alert('Draw');
-        startNewGame();
+        setTimeout(() => {
+            alert('Draw');
+            startNewGame();
+        }, 100);
     } else {
         turn = turn === 'X' ? 'O' : 'X';
-        document.getElementById('turn').textContent = 'Player ' + turn;
+        updateTurnDisplay();
     }
 }
 
-init();
-
+// Theme toggle handler
 document.getElementById('theme-switch').addEventListener('change', function() {
     document.body.classList.toggle('dark', this.checked);
 });
+
+// Initialize the game
+init();
