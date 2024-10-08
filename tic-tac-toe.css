@@ -1,0 +1,130 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  font-family: 'Arial', sans-serif;
+  background: var(--bg-color);
+  transition: background-color 0.3s ease-in-out;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--container-bg);
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin: auto;
+  transition: background-color 0.3s ease-in-out;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 20px auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+td {
+  background-color: var(--cell-bg);
+  border: 3px solid var(--border-color);
+  width: 120px;
+  height: 120px;
+  font-size: 80px;
+  color: var(--text-color);
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.3s, transform 0.3s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  perspective: 1000px;
+}
+
+td:hover {
+  background-color: var(--cell-hover);
+  transform: scale(1.05);
+}
+
+td.x::before, td.o::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+td.x::before {
+  background-image: url('path/to/x-image.png'); /* Replace with your 3D X image path */
+}
+
+td.o::before {
+  background-image: url('path/to/o-image.png'); /* Replace with your 3D O image path */
+}
+
+#player {
+  margin-top: 10px;
+  font-size: 1.8rem;
+  color: var(--text-color);
+}
+
+.theme-toggle {
+  margin-bottom: 20px;
+}
+
+.theme-toggle label {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.dark {
+  --bg-color: #222;
+  --container-bg: #333;
+  --cell-bg: #444;
+  --cell-hover: #555;
+  --border-color: #666;
+  --text-color: #fff;
+}
+
+.light {
+  --bg-color: #f0f0f0;
+  --container-bg: #fff;
+  --cell-bg: #ddd;
+  --cell-hover: #bbb;
+  --border-color: #aaa;
+  --text-color: #333;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+  td {
+      width: 80px;
+      height: 80px;
+      font-size: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  td {
+      width: 60px;
+      height: 60px;
+      font-size: 40px;
+  }
+}
